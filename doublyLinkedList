@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node
+{
+  struct Node *prev;
+  int data;
+  struct Node *next;
+} *first = NULL;
+
+
+void
+create (int A[], int n)
+{
+  struct Node *t, *last;
+
+  ///create first node///
+  first = (struct Node *) malloc (sizeof (struct Node));
+  first->data = A[0];
+  first->prev = first->next = NULL;
+  last = first;			///abhi tk ek hi node banaya hai so "last" wale ko bhi first pr rkh do
+
+  ///create whole linked list///
+  for (int i = 1; i < n; i++)
+    {
+      ///temporary pointer ki help se baki sare node create krenge///
+      t = (struct Node *) malloc (sizeof (struct Node));
+      t->data = A[i];
+      ///as we have to insert the data after the last node///
+      t->next = last->next;
+      t->prev = last;
+      last->next = t;
+      last = t;
+    }
+}
+
+void
+display_doubly_linkedlist (struct Node *p)
+{
+  while (p)
+    {
+      printf ("%d\n", p->data);
+      p = p->next;
+    }
+  printf ("\n");
+}
+
+int
+Length (struct Node *p)
+{
+  int len = 0;
+  while (p)
+    {
+      len++;
+      p = p->next;
+    }
+  return len;
+}
+
+void
+insert (struct Node *p, int index, int x)
+{
+  struct Node *t;
+  int i;
+  if (index < 0 || index > Length (first))
+    return;
+  if (index == 0)
+    {
+      t = (struct Node *) malloc (sizeof (struct Node));
+      t->data = x;
+      t->prev = NULL;
+      t->next = first;
+      first->prev = t;
+      first = t;
+    }
+  else
+    {
+      for (i = 0; i < index - 1; i++)
+	p = p->next;
+      t = (struct Node *) malloc (sizeof (struct Node));
+      t->data = x;
+      t->prev = p;
+      t->next = p->next;
+      if (p->next)
+	p->next->prev = t;
+      p->next = t;
+
+    }
+}
+
+int
+delete (struct Node *p, int index)
+{
+  struct Node *q;
+  int x = -1;
+  int i;
+  if (index < 1 || index > Length (first))
+    return -1;
+  if (index == 1)
+    {
+      first = first->next;
+      if (first)
+	first->prev = NULL;
+      x = p->data;
+      free (p);
+    }
+  else
+    {
+      for (i = 0; i < index - 1; i++)
+	p = p->next;
+      p->prev->next = p->next;
+      if (p->next)
+	p->next->prev = p->prev;
+      x = p->data;
+      free (p);
+    }
+  return x;
+}
+
+
+int main() {
+    int choice;
+    int n, index, x;
+
+    while (1) {
+        printf("\n");
+        printf("1. Create Doubly Linked List\n");
+        printf("2. Display Doubly Linked List\n");
+        printf("3. Insert Node\n");
+        printf("4. Delete Node\n");
+        printf("0. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 0:
+                exit(0);
+            case 1:
+                printf("Enter the number of elements: ");
+                scanf("%d", &n);
+                int* A = (int*)malloc(n * sizeof(int));
+                printf("Enter the elements: ");
+                for (int i = 0; i < n; i++) {
+                    scanf("%d", &A[i]);
+                }
+                create(A, n);
+                printf("Doubly Linked List created successfully!\n");
+                free(A);
+                break;
+            case 2:
+                printf("Displaying Doubly Linked List:\n");
+                display_doubly_linkedlist(first);
+                break;
+            case 3:
+                printf("Enter the index to insert node: ");
+                scanf("%d", &index);
+                printf("Enter the value to insert: ");
+                scanf("%d", &x);
+                insert(first, index, x);
+                printf("Node inserted successfully!\n");
+                break;
+            case 4:
+                printf("Enter the index to delete node: ");
+                scanf("%d", &index);
+                int deletedValue = delete(first, index);
+                if (deletedValue != -1)
+                    printf("Node at index %d deleted. Deleted value: %d\n", index, deletedValue);
+                else
+                    printf("Invalid index!\n");
+                break;
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+
+    return 0;
+}
