@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Queue{
+  int size ;
+  int front ;
+  int rear;
+  int *Q;
+};
+
+
+void create(struct Queue *q , int size){
+    q->size=size;
+    q->front=q->rear=-1;
+    q->Q=(int*)malloc(q->size*sizeof(int));
+}
+
+void enqueue(struct Queue *q, int x){
+    
+    if((q->rear + 1)%q->size==q->front)
+        printf("Queue is FULL\n");
+    
+    else{
+        q->rear = (q->rear + 1 )%q->size;
+        
+       q-> Q[q->rear]=x;
+    }
+}
+
+int dequeue(struct Queue *q){
+    int x=-1;
+    if(q->front==q->rear){
+        printf("Queue is empty\n");
+    }
+    else{
+        q->front = (q->front + 1)% q->size;
+        x=q->Q[q->front];
+    }
+    
+    return x;
+    
+}
+
+
+void display(struct Queue q){
+
+    int i = q.front+1;
+    
+    do{
+        printf("%d ",q.Q[i]);
+        i=(i+1)%q.size;
+    }while(i!=(q.rear+1)%q.size);
+    printf("\n");
+    
+}
+int main() {
+    struct Queue q;
+    int choice, element, size;
+
+    printf("Enter the size of the queue: ");
+    scanf("%d", &size);
+    create(&q, size);
+
+    while (1) {
+        printf("\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Display\n");
+        printf("0. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 0:
+                exit(0);
+            case 1:
+                printf("Enter the element to enqueue: ");
+                scanf("%d", &element);
+                enqueue(&q, element);
+                break;
+            case 2:
+                element = dequeue(&q);
+                if (element != -1) {
+                    printf("Dequeued element: %d\n", element);
+                }
+                break;
+            case 3:
+                display(q);
+                break;
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+
+    return 0;
+}
