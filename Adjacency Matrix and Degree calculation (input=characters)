@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void printAdjacencyMatrix(int** arr, int n) {
+    printf("THE ADJACENCY MATRIX IS:\n\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%d ", arr[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+void calculateDegree(int** arr, int n) {
+    for (int i = 0; i < n; i++) {
+        int degree = 0;
+        for (int j = 0; j < n; j++) {
+            if (arr[i][j] == 1)
+                degree++;
+        }
+        printf("THE DEGREE OF VERTEX %d IS: %d\n", i + 1, degree);
+    }
+    printf("\n");
+}
+
+void deallocateMatrix(int** arr, int n) {
+    for (int i = 0; i < n; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+}
+
+int main() {
+    int n, m;
+    int** arr;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter number of edges: ");
+    scanf("%d", &m);
+
+    // Allocate memory for adjacency matrix
+    arr = (int**)malloc(n * sizeof(int*));
+    for (int i = 0; i < n; i++) {
+        arr[i] = (int*)malloc(n * sizeof(int));
+        for (int j = 0; j < n; j++) {
+            arr[i][j] = 0;
+        }
+    }
+
+    for (int i = 0; i < m; i++) {
+        int a, b;
+        printf("Enter vertices connected by the edge: ");
+        scanf("%d %d", &a, &b);
+
+        arr[a - 1][b - 1] = 1;
+        arr[b - 1][a - 1] = 1;
+    }
+
+    int choice;
+    do {
+        printf("\n---- MENU ----\n");
+        printf("1. Print Adjacency Matrix\n");
+        printf("2. Calculate Degrees\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            printAdjacencyMatrix(arr, n);
+            break;
+        case 2:
+            calculateDegree(arr, n);
+            break;
+        case 3:
+            printf("Exiting...\n");
+            break;
+        default:
+            printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 3);
+
+    // Deallocate memory for adjacency matrix
+    deallocateMatrix(arr, n);
+
+    return 0;
+}
