@@ -1,0 +1,154 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int** A;
+int* visited;
+int n;
+int* queue;
+int front = -1, rear = -1;
+
+void enqueue(int item) {
+    if (rear == n - 1) {
+        printf("Queue is full.\n");
+    } else {
+        if (front == -1)
+            front = 0;
+        rear++;
+        queue[rear] = item;
+    }
+}
+
+int dequeue() {
+    int item;
+    if (front == -1 || front > rear) {
+        printf("Queue is empty.\n");
+        return -1;
+    } else {
+        item = queue[front];
+        front++;
+        return item;
+    }
+}
+
+int isEmpty() {
+    if (front == -1 || front > rear)
+        return 1;
+    else
+        return 0;
+}
+
+void BFS(int i) {
+    int u, v;
+    printf("%d ", i);
+
+    visited[i] = 1;
+    enqueue(i);
+
+    while (!isEmpty()) {
+        u = dequeue();
+        for (v = 1; v <= n; v++) {
+            if (A[u][v] == 1 && visited[v] == 0) {
+                printf("%d ", v);
+                visited[v] = 1;
+                enqueue(v);
+            }
+        }
+    }
+}
+
+void createAdjacencyMatrix() {
+    int m, i, j;
+
+    printf("Enter the number of vertices: ");
+    scanf("%d", &n);
+
+    A = (int**)malloc((n + 1) * sizeof(int*));
+    visited = (int*)calloc((n + 1), sizeof(int));
+    queue = (int*)malloc((n + 1) * sizeof(int));
+
+    for (i = 0; i <= n; i++) {
+        A[i] = (int*)calloc((n + 1), sizeof(int));
+    }
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &m);
+
+    printf("Enter the edges:\n");
+    for (i = 0; i < m; i++) {
+        int a, b;
+        scanf("%d %d", &a, &b);
+        A[a][b] = 1;
+        A[b][a] = 1;
+    }
+}
+
+void displayAdjacencyMatrix() {
+    printf("The adjacency matrix is:\n");
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            printf("%d ", A[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void traverseBFS() {
+    int startVertex;
+
+    printf("Enter the starting vertex for BFS traversal: ");
+    scanf("%d", &startVertex);
+
+    if (startVertex < 1 || startVertex > n) {
+        printf("Invalid starting vertex.\n");
+        return;
+    }
+
+    printf("BFS traversal starting from vertex %d: ", startVertex);
+    BFS(startVertex);
+    printf("\n");
+}
+
+void deallocateMatrix() {
+    int i;
+    for (i = 0; i <= n; i++) {
+        free(A[i]);
+    }
+    free(A);
+    free(visited);
+    free(queue);
+}
+
+int main() {
+    int choice;
+
+    do {
+        printf("\n---- MENU ----\n");
+        printf("1. Create Adjacency Matrix\n");
+        printf("2. Display Adjacency Matrix\n");
+        printf("3. Traverse BFS\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                createAdjacencyMatrix();
+                break;
+            case 2:
+                displayAdjacencyMatrix();
+                break;
+            case 3:
+                traverseBFS();
+                break;
+            case 4:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 4);
+
+    deallocateMatrix();
+
+    return 0;
+}
